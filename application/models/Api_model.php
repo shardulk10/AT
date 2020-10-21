@@ -55,6 +55,26 @@ class Api_model extends CI_Model
         return $this->db->insert_id();
     }
 
+    function deleteUser($email) {
+        $this->db->where('id', $slideId);
+        $this->db->delete('tbl_faqs');
+    }
+
+    function getUserDetailsData($email)
+    {
+
+        $this->db->select("id");
+        $this->db->from($this->table_user_name);
+        $this->db->where("email", $email);   
+        $query = $this->db->get();
+        $data = $query->row();
+        
+        if(!empty($data->id)) {
+            return $data->id;
+        } else {
+            return 0;
+        }
+    }
     
 }
 

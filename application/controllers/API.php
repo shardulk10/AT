@@ -66,6 +66,8 @@ class Api extends CI_Controller {
 		}
 	}
 
+	// http://localhost/AT/API/addUser
+	// Form Data : name, email, mobile, deptname
 	public function addUser()
 	{
 		$name = !empty($_POST['name']) ? trim($_POST['name']) : "";
@@ -104,13 +106,17 @@ class Api extends CI_Controller {
 			} else {
 				$dataArray['deptid'] = $deptId; 
 			}
+		}
+
+		if($email != "" && $this->api_model->checkUserExists($email) > 0) {
+				$error['006'] = "User already exist.";
 		} 
 
 		if(count($error) > 0) {
 			echo json_encode($error);
 		} else {
-			if(!empty($this->api_model->addNewDepartment($dataArray))) {
-				$success['001'] = "Department Added Successfully.";
+			if(!empty($this->api_model->addNewUser($dataArray))) {
+				$success['001'] = "User Added Successfully.";
 				echo json_encode($success);
 			}
 		}
@@ -118,11 +124,31 @@ class Api extends CI_Controller {
 
 	public function editUser()
 	{
+
 		
 	}
 
 	public function deleteeUser()
 	{
+		$email = !empty($_POST['email']) ? trim($_POST['email']) : "";
+		
+		$error = array();
+		$success = array();
+		$dataArray = array();
+
+		if($email == "") {
+			$error['001'] = "Please Enter Email";
+		}
+
+		if($email != "" && $this->api_model->checkUserExists($email) > 0) {
+			$userId = $this->api_model->getUserDetailsData($email);
+			$this->api_model->checkUserExists($userId);
+			$success['001'] = "User Deleted Successfully.";
+			echo json_encode($success);
+			exit();
+		}
+		echo json_encode($error);
+		exit();
 		
 	}
 
