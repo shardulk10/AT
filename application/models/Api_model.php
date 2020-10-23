@@ -55,6 +55,14 @@ class Api_model extends CI_Model
         return $this->db->insert_id();
     }
 
+    function editUser($dataArray,$userId) {
+        $this->db->trans_start();
+        $this->db->where('id', $userId);
+        $this->db->update($this->table_user_name, $dataArray);
+        $this->db->trans_complete();
+        return true;
+    }
+
     function deleteUser($userid) {
         $this->db->where('id', $userid);
         $this->db->delete($this->table_user_name);

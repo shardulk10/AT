@@ -122,9 +122,59 @@ class Api extends CI_Controller {
 		}
 	}
 
+	// http://localhost/AT/API/editUser
+	// Form Data : name, email, mobile, deptname
 	public function editUser()
 	{
+		$name = !empty($_POST['name']) ? trim($_POST['name']) : "";
+		$email = !empty($_POST['email']) ? trim($_POST['email']) : "";
+		$mobile = !empty($_POST['mobile']) ? trim($_POST['mobile']) : "";
+		$deptname = !empty($_POST['deptname']) ? trim($_POST['deptname']) : "";
 
+		$error = array();
+		$success = array();
+		$dataArray = array();
+
+		if($name == "") {
+			$error['001'] = "Please Enter Name";
+		} else {
+			$dataArray['name'] = $name; 
+		}
+
+		if($email == "") {
+			$error['002'] = "Please Enter Email";
+		}
+
+		if($mobile == "") {
+			$error['003'] = "Please Enter mobile";
+		} else {
+			$dataArray['mobile'] = $mobile; 
+		} 
+
+		if($deptname == "") {
+			$error['004'] = "Please Enter Department Name.";
+		} else {
+			$deptId = $this->api_model->getDeptId($deptname);
+			if(empty($deptId)) {
+				$error['005'] = "Department is not available. Please add department first.";
+			} else {
+				$dataArray['deptid'] = $deptId; 
+			}
+		}
+
+		if($email != "" && $this->api_model->checkUserExists($email) == 0) {
+				$error['006'] = "User with this email Id does not exist.";
+		} 
+
+		if(count($error) > 0) {
+			echo json_encode($error);
+		} else {
+			$userId = $this->api_model->getUserDetailsData($email);
+			if(!empty($this->api_model->editUser($dataArray,$userId))) {
+				$success['001'] = "User Updated Successfully.";
+				echo json_encode($success);
+			}
+		}
 		
 	}
 
