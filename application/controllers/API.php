@@ -121,6 +121,7 @@ class Api extends CI_Controller {
 			}
 		}
 	}
+	
 
 	// http://localhost/AT/API/editUser
 	// Form Data : name, email, mobile, deptname
