@@ -55,9 +55,9 @@ class Api_model extends CI_Model
         return $this->db->insert_id();
     }
 
-    function deleteUser($email) {
-        $this->db->where('id', $slideId);
-        $this->db->delete('tbl_faqs');
+    function deleteUser($userid) {
+        $this->db->where('id', $userid);
+        $this->db->delete($this->table_user_name);
     }
 
     function getUserDetailsData($email)
@@ -73,6 +73,38 @@ class Api_model extends CI_Model
             return $data->id;
         } else {
             return 0;
+        }
+    }
+
+    function getAllUserDetailsData($dataArray)
+    {
+        $this->db->select("*");
+        $this->db->from($this->table_user_name);
+
+        $likeCriteria = array();
+        if(!empty($dataArray['name'])) {
+            $likeCriteria[] = "(name  LIKE '%".$dataArray['name']."%') ";
+        }
+        
+        if(!empty($dataArray['email'])) {
+            $likeCriteria[] = "(email LIKE '%".$dataArray['email']."%') ";
+        }
+
+        if(!empty($dataArray['mobile'])) {
+            $likeCriteria[] = "(mobile LIKE '%".$dataArray['mobile']."%') ";
+        }
+
+        $likeCriteria =  !empty($likeCriteria) ? implode(" OR ",$likeCriteria) : "";
+        if($likeCriteria != "") {
+            
+            $this->db->where($likeCriteria.' AND 1=1 ');
+            $query = $this->db->get();
+
+            if($query->num_rows() > 0) {
+                return $query->result('array');
+            }
+        } else {
+            return false;
         }
     }
     

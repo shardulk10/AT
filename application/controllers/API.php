@@ -128,6 +128,8 @@ class Api extends CI_Controller {
 		
 	}
 
+	// http://localhost/AT/API/deleteeUser
+	// Form Data Email
 	public function deleteeUser()
 	{
 		$email = !empty($_POST['email']) ? trim($_POST['email']) : "";
@@ -142,18 +144,34 @@ class Api extends CI_Controller {
 
 		if($email != "" && $this->api_model->checkUserExists($email) > 0) {
 			$userId = $this->api_model->getUserDetailsData($email);
-			$this->api_model->checkUserExists($userId);
+			$this->api_model->deleteUser($userId);
 			$success['001'] = "User Deleted Successfully.";
 			echo json_encode($success);
 			exit();
+		} else {
+			$error['002'] = "User Not Exist";
 		}
 		echo json_encode($error);
 		exit();
 		
 	}
 
+	// http://localhost/AT/API/searchUser
+	// Form Data : name, email, mobile
 	public function searchUser()
 	{
+		$dataArray = array();
+		$dataArray['name'] = !empty($_POST['name']) ? trim($_POST['name']) : "";
+		$dataArray['email'] = !empty($_POST['email']) ? trim($_POST['email']) : "";
+		$dataArray['mobile'] = !empty($_POST['mobile']) ? trim($_POST['mobile']) : "";
 		
+		$data = $this->api_model->getAllUserDetailsData($dataArray);
+		if(empty($data)) {
+			echo json_encode(array("001"=>" No Records Found"));	
+		} else {
+			echo json_encode($data);
+		}
+		
+		exit();
 	}
 }
